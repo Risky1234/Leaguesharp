@@ -76,7 +76,7 @@ namespace RiskyMorgana
 
             Menu.AddToMainMenu();
 
-            Game.PrintChat("<font color='#FF00BF'>Risky Morgana loaded. Credits:</font> <font color='#FF0000'>Taerarenai,Braum,Worstping, <3</font><font color='#FFFF00'>");
+            Game.PrintChat("<font color='#FF00BF'>Risky Morgana loaded. Credits:</font> <font color='#FF0000'>Devq,Taerarenai,Braum,Worstping, <3</font><font color='#FFFF00'>");
 
             Game.OnGameUpdate += OnGameUpdate;
             Drawing.OnDraw += OnDraw;
@@ -106,14 +106,11 @@ namespace RiskyMorgana
                 return;
             }
 
-            if (Player.Distance(target) <= Q.Range && Q.IsReady() && (Menu.Item("UseQCombo").GetValue<bool>()))
-            {
-                Q.Cast(target);
-            }
-            if (Player.Distance(target) <= W.Range && W.IsReady() && (Menu.Item("UseWCombo").GetValue<bool>()))
-            {
-                W.Cast(target);
-            }
+            if (Q.IsReady())
+                castSkillshot(Q, Q.Range, TargetSelector.DamageType.Magical, HitChance.High);
+
+            if (W.IsReady())
+                castSkillshot(W, W.Range, TargetSelector.DamageType.Magical, HitChance.High);
            
         }
 
@@ -193,6 +190,21 @@ namespace RiskyMorgana
                     Drawing.DrawCircle(ObjectManager.Player.Position, R.Range, Color.Purple);
                 }
             }
+        }
+
+        public static void castSkillshot(Spell spell, float range, LeagueSharp.Common.TargetSelector.DamageType type, HitChance hitChance)
+        {
+            var target = LeagueSharp.Common.TargetSelector.GetTarget(range, type);
+            if (target == null || !spell.IsReady())
+                return;
+            spell.UpdateSourcePosition();
+            if (spell.GetPrediction(target).Hitchance >= hitChance)
+                spell.Cast(target, packets());
+        }
+
+        public static bool packets()
+        {
+            return Menu.Item("usePackets").GetValue<bool>();
         }
     }
 }
