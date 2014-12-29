@@ -76,7 +76,7 @@ namespace RiskyMorgana
 
             Menu.AddToMainMenu();
 
-            Game.PrintChat("<font color='#FF00BF'>Risky Morgana loaded. Credits:</font> <font color='#FF0000'>TheKushStyle,Braum,Worstping <3</font><font color='#FFFF00'>");
+            Game.PrintChat("<font color='#FF00BF'>Risky Morgana loaded. Credits:</font> <font color='#FF0000'>Taerarenai,Braum,Worstping, <3</font><font color='#FFFF00'>");
 
             Game.OnGameUpdate += OnGameUpdate;
             Drawing.OnDraw += OnDraw;

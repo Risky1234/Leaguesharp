@@ -1,1 +1,2 @@
 C:\Users\Risky\Desktop\LeagueSharp\RiskyAssemblies\RiskyMorgana\RiskyMorgana\bin\Release\RiskyMorgana.exe.config
+C:\Users\Risky\Desktop\LeagueSharp\MyAssemblies\Leaguesharp\RiskyMorgana\RiskyMorgana\bin\Release\RiskyMorgana.exe.config
