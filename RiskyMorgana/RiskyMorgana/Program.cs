@@ -65,6 +65,10 @@ namespace RiskyMorgana
             Menu.SubMenu("Wave").AddItem(new MenuItem("UseWWave", "Use W")).SetValue(true);
             Menu.SubMenu("Wave").AddItem(new MenuItem("ActiveWave", "WaveClear Key").SetValue(new KeyBind("V".ToCharArray()[0], KeyBindType.Press)));
 
+            Menu.AddSubMenu(new Menu("Misc Settings", "misc"));
+            Menu.SubMenu("misc").AddItem(new MenuItem("usePackets", "Use Packets to Cast Spells").SetValue(false));
+
+
             Menu.AddSubMenu(new Menu("Drawings", "Drawings"));
             Menu.SubMenu("Drawings").AddItem(new MenuItem("DrawQ", "Draw Q")).SetValue(true);
             Menu.SubMenu("Drawings").AddItem(new MenuItem("DrawW", "Draw W")).SetValue(true);
@@ -76,7 +80,7 @@ namespace RiskyMorgana
 
             Menu.AddToMainMenu();
 
-            Game.PrintChat("<font color='#FF00BF'>Risky Morgana loaded. Credits:</font> <font color='#FF0000'>Devq,Taerarenai,Braum,Worstping, <3</font><font color='#FFFF00'>");
+            Game.PrintChat("<font color='#FF00BF'>Risky Morgana loaded. Credits:</font> <font color='#FF0000'>Devq,Taerarenai,Braum,Worstping <3</font><font color='#FFFF00'>");
 
             Game.OnGameUpdate += OnGameUpdate;
             Drawing.OnDraw += OnDraw;
@@ -84,23 +88,24 @@ namespace RiskyMorgana
 
         private static void OnGameUpdate(EventArgs args)
         {
-            Player = ObjectManager.Player;
+            var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Physical);
+            var comboKey = Menu.Item("ActiveCombo").GetValue<KeyBind>().Active;
+            var farmKey = Menu.Item("ActiveWave").GetValue<KeyBind>().Active;
 
+            if (comboKey && target != null)
+                Combo(target);
+            else
+            {
 
-            orbwalker.SetAttack(true);
-            if (Menu.Item("ActiveCombo").GetValue<KeyBind>().Active)
-            {
-                Combo();
+                if (farmKey)
+                    WaveClear();
             }
-            if (Menu.Item("ActiveWave").GetValue<KeyBind>().Active)
-            {
-                WaveClear();
-            }
+
         }
 
-        private static void Combo()
-        {
-            Obj_AI_Hero target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
+
+        private static void Combo(Obj_AI_Base target)
+        {           
             if (target == null)
             {
                 return;
@@ -109,8 +114,10 @@ namespace RiskyMorgana
             if (Q.IsReady())
                 castSkillshot(Q, Q.Range, TargetSelector.DamageType.Magical, HitChance.High);
 
-            if (W.IsReady())
-                castSkillshot(W, W.Range, TargetSelector.DamageType.Magical, HitChance.High);
+            if (Player.Distance(target) <= W.Range && W.IsReady() && (Menu.Item("UseWCombo").GetValue<bool>()))
+            {
+                W.Cast(target);
+            }
            
         }
 
@@ -191,7 +198,6 @@ namespace RiskyMorgana
                 }
             }
         }
-
         public static void castSkillshot(Spell spell, float range, LeagueSharp.Common.TargetSelector.DamageType type, HitChance hitChance)
         {
             var target = LeagueSharp.Common.TargetSelector.GetTarget(range, type);
@@ -206,5 +212,6 @@ namespace RiskyMorgana
         {
             return Menu.Item("usePackets").GetValue<bool>();
         }
+
     }
 }
